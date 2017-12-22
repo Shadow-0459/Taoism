@@ -1,0 +1,58 @@
+div(layout="row")
+    .md-padding(flex-xs flex-gt-xs="33")
+        md-card
+            md-card-header
+                md-card-avatar
+                    md-icon.md-avatar-icon(md-svg-icon="assets/images/ic_list_white_24px.svg")
+                md-card-header-text
+                    span.md-title Modified KCS Solution Review
+            md-card-content(layout="column")
+                p Review the KCS Solution which was modified or create in last week no matter if it has been linked to a case.
+            md-card-actions(layout="row" layout-align="end")
+                md-button.md-primary.md-raised(ui-sref="main.kcsreview") Enter
+    .md-padding(flex-xs flex-gt-xs="33")
+        md-card
+            md-card-header
+                md-card-avatar
+                    md-icon.md-avatar-iconmd-icon(md-svg-src="assets/images/ic_link_white_24px.svg")
+                md-card-header-text
+                    span.md-title Top Linked KCS Solutions Review
+            md-card-content(layout="column")
+                p Review the linked KCS Solutions according to your default SBR. The default display solutions are top 30 linked to a case in last week.
+            md-card-actions(layout="row" layout-align="end")
+                md-button.md-primary.md-raised(ui-sref="main.linkedkcs") Enter
+    .md-padding(flex-xs flex-gt-xs="33")
+        md-card
+            md-card-header
+                md-card-avatar
+                    md-icon.md-avatar-iconmd-icon(md-svg-src="assets/images/ic_notifications_white_24px.svg")
+                md-card-header-text
+                    span.md-title Rule Nomination Review
+            md-card-content(layout="column")
+                p Review candidate rules nominated by Red Hatters. The nominations may be KCS solution, Support Case or Bugzilla Bug.
+            md-card-actions(layout="row" layout-align="end")
+                md-button.md-primary.md-raised(ui-sref="main.proactiveissuereview") Enter
+div(layout="row")
+    .md-padding(flex-xs flex-gt-xs="33")
+        md-card
+            md-card-header
+                md-card-avatar
+                    md-icon.md-avatar-iconmd-icon(md-svg-src="assets/images/ic_insert_chart_white_24px.svg")
+                md-card-header-text
+                    span.md-title Statistics
+            md-card-content(layout="column")
+                p Generate Statistics Report, for example, how many KCS Solution has been reviewed by a rule developer in a chosen period. 
+            md-card-actions(layout="row" layout-align="end")
+                md-button.md-primary.md-raised(ui-sref="main.statistics") Enter
+    .md-padding(flex-xs flex-gt-xs="33")
+        md-card
+            md-card-header
+                md-card-avatar
+                    md-icon.md-avatar-iconmd-icon(md-svg-src="assets/images/ic_search_white_24px.svg")
+                md-card-header-text
+                    span.md-title KCS Solution Search
+            md-card-content(layout="column")
+                p Search for KCS Solution, for example, if you have some solution ids and you want to get the solutions, you can search them by the ids.
+            md-card-actions(layout="row" layout-align="end")
+                md-button.md-primary.md-raised(ui-sref="main.certainSearch") Enter
+        

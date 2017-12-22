@@ -1,0 +1,106 @@
+div(layout="column" layout-align="center")
+    md-content(layout="row")
+        h2 Modified KCS Solution Review
+        span(flex)
+        md-button.md-fab.md-raised.md-mini(aria-label="Top Linked KCS Solutions Review" ui-sref="main.linkedkcs")
+            md-tooltip(md-direction="bottom" md-autohide="true") Top Linked KCS Solutions Review
+            md-icon(md-svg-icon="assets/images/ic_link_black_24px.svg")
+        md-button.md-fab.md-raised.md-mini(aria-label="Reviewed KCS" ui-sref="main.reviewedkcs")
+            md-tooltip(md-direction="bottom" md-autohide="true") Reviewed KCS Solutions
+            md-icon(md-svg-icon="assets/images/ic_playlist_add_check_black_24px.svg")
+        md-button.md-fab.md-raised.md-mini(aria-label="Search" ng-click="showSearchSidenav()")
+            md-tooltip(md-direction="bottom" md-autohide="true") Search Modified KCS Solution
+            md-icon(md-svg-icon="assets/images/ic_search_black_24px.svg")
+    md-card.md-whiteframe-6dp(ng-if="isShowInProgress && (inProgressKCSList.length > 0)")
+        .md-padding
+            div(layout="row")
+                .md-padding
+                    span.md-subhead(style="color:rgba(0,0,0,0.54);") "In Progress" KCS Solutions
+                span(flex)
+                md-button.md-icon-button(ng-click="closeInProgressSection()")
+                    md-tooltip(md-direction="left" md-autohide="true") Close
+                    md-icon(md-svg-icon="assets/images/ic_close_black_24px.svg")
+            md-table-container(flex)
+                table(md-table md-progress="promise")
+                    thead(md-head md-order="myOrder")
+                        tr(md-row)
+                            th(md-column) Solution ID
+                            <!-- when the user clicks this cell, the myOrder variable will get the value 'nameToLower' -->
+                            th(md-column) Title
+                            th(md-column md-order-by="case_count" style="padding: 0 10px 0 0;") Total Case Count
+                            <!-- the variable myOrder will not be changed when this cell is clicked -->
+                            th(md-column md-order-by="sbr")
+                                span SBR
+                            th(md-column md-order-by="product")
+                                span Product
+                            th(md-column md-order-by="lastModifiedDate")
+                                span Last Modified Date
+                            th(md-column md-order-by="reviewState") State
+                            th(md-column)
+                                span Action
+                    tbody(md-body)
+                        <!-- we can let ng-repeat sort the columns for us -->
+                        tr(md-row ng-repeat="kcs in inProgressKCSList | orderBy: myOrder")
+                            td(md-cell)
+                                a(href="{{kcs.view_uri}}" target="_blank") {{kcs.id}}
+                            td(md-cell)
+                                p {{kcs.title}}
+                                    span.watermark(ng-if="isHowTo(kcs.title)") How to
+                            td(md-cell style="padding: 0 0 0 0;")
+                                p {{kcs.case_count}}
+                            td(md-cell style="padding: 0 20px 0 0;")
+                                p.nowrap(ng-repeat="sbr in kcs.sbr track by $index" ng-bind-html="sbr")
+                            td(md-cell style="padding: 0 20px 0 0;")
+                                p(ng-repeat="product in kcs.product track by $index" ng-bind-html="product")
+                            td(md-cell style="padding: 0 0 0 0;") {{formatDate(kcs.lastModifiedDate)}}
+                            td(md-cell style="padding: 0 20px 0 0;")
+                                p(ng-class="{'candidate': kcs.reviewState === 'Candidate', 'ruled': kcs.reviewState === 'Ruled', 'not-sure': kcs.reviewState === 'In Progress'}") {{kcs.reviewState}}
+                            td(md-cell)
+                                md-button.md-fab.md-raised.md-mini(aria-label="Review" ng-click="showReviewDialog($event, kcs)")
+                                    md-tooltip(md-direction="left" md-autohide="true") Review
+                                    md-icon(md-svg-icon="assets/images/ic_rate_review_black_24px.svg")
+    md-content(ng-if="!isShowInProgress && (inProgressKCSList.length > 0)")
+        md-button.md-primary(ng-click="showInProgressSection()") Show "In Progress" KCS Solutions
+    md-content
+        md-table-container(flex)
+            .md-padding
+                span.md-subhead(style="color:rgba(0,0,0,0.54);") {{subtitle}}
+            table(md-table md-progress="promise")
+                thead(md-head md-order="myOrder")
+                    tr(md-row)
+                        th(md-column) Solution ID
+                        <!-- when the user clicks this cell, the myOrder variable will get the value 'nameToLower' -->
+                        th(md-column) Title
+                        th(md-column md-order-by="case_count" style="padding: 0 10px 0 0;") Total Case Count
+                        <!-- the variable myOrder will not be changed when this cell is clicked -->
+                        th(md-column md-order-by="sbr")
+                            span SBR
+                        th(md-column md-order-by="product")
+                            span Product
+                        th(md-column md-order-by="lastModifiedDate")
+                            span Last Modified Date
+                        th(md-column md-order-by="reviewState") State
+                        th(md-column)
+                            span Action
+                tbody(md-body)
+                    <!-- we can let ng-repeat sort the columns for us -->
+                    tr(md-row ng-repeat="kcs in kcsList | orderBy: myOrder | limitTo: resultsOptions.limit : (resultsOptions.page -1) * resultsOptions.limit")
+                        td(md-cell)
+                            a(href="{{kcs.view_uri}}" target="_blank") {{kcs.id}}
+                        td(md-cell layout="row")
+                            p {{kcs.title}}
+                                span.watermark(ng-if="isHowTo(kcs.title)") How to
+                        td(md-cell style="padding: 0 0 0 0;")
+                            p {{kcs.case_count}}
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p.nowrap(ng-repeat="sbr in kcs.sbr track by $index" ng-bind-html="sbr")
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p(ng-repeat="product in kcs.product track by $index" ng-bind-html="product")
+                        td(md-cell style="padding: 0 0 0 0;") {{formatDate(kcs.lastModifiedDate)}}
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p(ng-class="{'candidate': kcs.reviewState === 'Candidate', 'ruled': kcs.reviewState === 'Ruled', 'not-sure': kcs.reviewState === 'In Progress'}") {{kcs.reviewState}}
+                        td(md-cell)
+                            md-button.md-fab.md-raised.md-mini(aria-label="Review" ng-click="showReviewDialog($event, kcs)")
+                                md-tooltip(md-direction="left" md-autohide="true") Review
+                                md-icon(md-svg-icon="assets/images/ic_rate_review_black_24px.svg")
+        md-table-pagination(md-limit="resultsOptions.limit" md-limit-options="resultsOptions.limitOptions" md-page="resultsOptions.page" md-total="{{kcsList.length}}" md-page-select="true" md-boundary-links="true" md-on-paginate="")

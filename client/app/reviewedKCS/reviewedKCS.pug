@@ -1,0 +1,56 @@
+div(layout="column" layout-align="center")
+    md-content
+        div(layout="row")
+            h2 Reviewed KCS Solutions
+            span(flex)
+            md-button.md-fab.md-raised.md-mini(aria-label="Modified KCS Review" ui-sref="main.kcsreview")
+                md-tooltip(md-direction="bottom" md-autohide="true") Modified KCS Solution Review
+                md-icon(md-svg-icon="assets/images/ic_list_black_24px.svg")
+            md-button.md-fab.md-raised.md-mini(aria-label="Top Linked KCS Solutions Review" ui-sref="main.linkedkcs")
+                md-tooltip(md-direction="bottom" md-autohide="true") Top Linked KCS Solutions Review
+                md-icon(md-svg-icon="assets/images/ic_link_black_24px.svg")
+            md-button.md-fab.md-raised.md-mini(aria-label="Search Reviewed KCS Solutions" ng-click="showSearchSidenav()")
+                md-tooltip(md-direction="bottom" md-autohide="true") Search Reviewed KCS Solutions
+                md-icon(md-svg-icon="assets/images/ic_search_black_24px.svg")
+        md-table-container(flex)
+            span.md-subhead(style="color:rgba(0,0,0,0.54);") {{subtitle}}
+            table(md-table md-progress="promise")
+                thead(md-head md-order="myOrder")
+                    tr(md-row)
+                        th(md-column) Solution ID
+                        <!-- when the user clicks this cell, the myOrder variable will get the value 'nameToLower' -->
+                        th(md-column) Title
+                        th(md-column md-order-by="case_count"  ng-if="false") Total Case Count
+                        <!-- the variable myOrder will not be changed when this cell is clicked -->
+                        th(md-column md-order-by="sbr")
+                            span SBR
+                        th(md-column md-order-by="product")
+                            span Product
+                        th(md-column md-order-by="reviewState")
+                            span Review State
+                        th(md-column md-order-by="lastReviewedDate")
+                            span Last Review Date
+                        th(md-column md-order-by="lastReviewedBy")
+                            span Last Review By
+                        th(md-column)
+                            span Action
+                tbody(md-body)
+                    <!-- we can let ng-repeat sort the columns for us -->
+                    tr(md-row ng-repeat="kcs in kcsList | orderBy: myOrder | limitTo: resultsOptions.limit : (resultsOptions.page -1) * resultsOptions.limit")
+                        td(md-cell)
+                            a(href="{{kcs.view_uri}}" target="_blank") {{kcs.id}}
+                        td(md-cell) {{kcs.title}}
+                        td(md-cell ng-if="false") {{kcs.case_count}}
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p(ng-repeat="sbr in kcs.sbr" ng-bind-html="sbr")
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p(ng-repeat="product in kcs.product" ng-bind-html="product")
+                        td(md-cell  style="padding: 0 20px 0 0;")
+                            p(ng-class="{'candidate': kcs.reviewState === 'Candidate', 'ruled': kcs.reviewState === 'Ruled', 'not-sure': kcs.reviewState === 'In Progress'}") {{kcs.reviewState}}
+                        td(md-cell  style="padding: 0 0 0 0;") {{formatDate(kcs.lastReviewedDate)}}
+                        td(md-cell  style="padding: 0 20px 0 0;") {{kcs.lastReviewedBy}}
+                        td(md-cell)
+                            md-button.md-fab.md-raised.md-mini(aria-label="Detail" ng-click="showDetailDialog($event, kcs)")
+                                md-tooltip(md-direction="left" md-autohide="true") Detail
+                                md-icon(md-svg-icon="assets/images/ic_description_black_24px.svg")
+        md-table-pagination(md-limit="resultsOptions.limit" md-limit-options="resultsOptions.limitOptions" md-page="resultsOptions.page" md-total="{{kcsList.length}}" md-page-select="true" md-boundary-links="true" md-on-paginate="")

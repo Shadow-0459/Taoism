@@ -1,0 +1,52 @@
+md-dialog(flex="50")
+    md-toolbar(layout="row")
+        .md-toolbar-tools
+            md-icon(md-svg-icon="assets/images/ic_event_white_24px.svg")
+            |&#160;&#160;
+            h2 Review KCS Solution {{kcs.id}}
+            span(flex)
+            md-button.md-icon-button(aria-label="cancel" ng-click="cancelDialog()")
+                md-icon(md-svg-icon="assets/images/ic_close_white_24px.svg")
+    md-progress-linear.md-warn(md-mode="indeterminate" ng-if="isLoading")
+    md-dialog-content
+        .md-dialog-content(layout="column")
+            .md-padding
+                .md-title {{kcs.title}}
+            md-subheader(ng-if="(kcs.lastModifiedDate > kcs.lastReviewedDate) && kcs.lastReviewedDate")
+                md-icon(md-svg-icon="assets/images/ic_info_black_24px.svg")
+                | &#160;&#160; This KCS is modified after the last review by
+                | <strong>{{kcs.lastReviewedBy}}</strong> at <strong>{{formatDate(kcs.lastReviewedDate)}}</strong>
+            .md-padding(layout="row")
+                md-button.md-primary(ng-href="{{kcs.view_uri}}" target="_blank") open kcs
+                md-button.md-primary(ng-href="https://access.redhat.com/node/{{kcs.id}}/timeline" target="_blank") open kcs timeline
+            md-divider
+            .md-padding(layout="column")
+                md-input-container
+                    label Review State
+                    md-select(ng-model="kcs.reviewState" required)
+                        md-option(value="Not a Candidate") Not a Candidate
+                        md-option(value="Candidate") Candidate
+                        md-option(value="In Progress") In Progress
+                        md-option(value="Ruled") Already Converted to a Insights Rule
+                        md-option(value="Rule Retired") The Insights Rule is Retired
+                md-input-container
+                    label Comment
+                    textarea(ng-model="comment" placeholder="Write a comment ...")
+            .md-padding(layout="column")
+                md-list(ng-if="kcs.activities.length > 0")
+                    md-subheader
+                        md-icon(md-svg-icon="assets/images/ic_comment_black_24px.svg")
+                        |&#160;&#160; Activities
+                    md-list-item.md-3-line.md-long-text(ng-repeat="activity in kcs.activities | orderBy:'-date'")
+                        .md-list-item-text(layout="column")
+                            div(layout="row")
+                                md-icon(md-svg-icon="assets/images/ic_account_circle_black_24px.svg")
+                                p &#160;&#160;{{activity.author}}
+                                p(flex layout="row" layout-align="center") {{activity.type}}
+                                p {{formatDate(activity.date)}}
+                            .md-padding(ng-if="activity.type !== 'modified the kcs'")
+                                p {{activity.content}}
+                        md-divider(ng-if="!$last")
+    md-dialog-actions.md-padding(layout="row" layout-align="end center")
+        md-button.md-raised.md-mini(ng-click="cancelDialog()" ng-disabled="isLoading") Cancel
+        md-button.md-raised.md-warn.md-mini(ng-click="hideDialog()" ng-disabled="isLoading") Save

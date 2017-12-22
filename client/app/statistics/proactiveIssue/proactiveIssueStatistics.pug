@@ -1,0 +1,54 @@
+div(layout="column" layout-align="start")
+    md-content(layout="row")
+        h2 Rule Nomination Review Statistics Report
+        span(flex)
+        md-button.md-fab.md-raised.md-mini(aria-label="KCS Solution Review Statistics Report" ui-sref="main.statistics")
+            md-tooltip(md-direction="bottom" md-autohide="true") KCS Solution Review Statistics Report
+            md-icon(md-svg-icon="assets/images/ic_insert_chart_black_24px.svg")
+    md-card
+        .md-padding
+            h3 Total Statistics Report
+            div(layout="row" layout-align="center")
+                md-button.md-icon-button(aria-label="Last Week" ng-click="lastWeek('total')")
+                    md-tooltip(md-direction="bottom" md-autohide="true") Last Week
+                    md-icon(md-svg-icon="assets/images/ic_navigate_before_black_24px.svg")
+                label(style="color:rgba(0,0,0,0.38); margin-top: 10px;") Start Date
+                md-datepicker(ng-model="totalStartDate" md-placeholder="Start date")
+                label(style="color:rgba(0,0,0,0.38); margin-top: 10px; margin-left: 30px") End Date
+                md-datepicker(ng-model="totalEndDate" md-placeholder="Enter date")
+                md-button.md-icon-button(aria-label="Next Week" ng-click="nextWeek('total')")
+                    md-tooltip(md-direction="bottom" md-autohide="true") Next Week
+                    md-icon(md-svg-icon="assets/images/ic_navigate_next_black_24px.svg")
+                md-button.md-primary.md-raised.md-mini(aria-label="Run" ng-click="runReport('total')") Go
+            div(layout="row" layout-align="center")
+                md-button.md-raised.md-mini(aria-label="Last Month" ng-click="lastMonth('total')") Last Month
+                md-button.md-raised.md-mini(aria-label="This Month" ng-click="thisMonth('total')") This Month
+                md-button.md-raised.md-mini(aria-label="This Year" ng-click="thisYear('total')") This Year
+        md-divider
+        md-progress-linear(md-mode="indeterminate" ng-if="isTotalLoading")
+        .md-padding
+            div(id="totalChart" style="width: 100%; height: 300px;")
+
+    md-card
+        .md-padding
+            h3 Statistics Report by Rule Nomination Source
+            div(layout="row" layout-align="center")
+                md-button.md-icon-button(aria-label="Last Week" ng-click="lastWeek('type')")
+                    md-tooltip(md-direction="bottom" md-autohide="true") Last Week
+                    md-icon(md-svg-icon="assets/images/ic_navigate_before_black_24px.svg")
+                label(style="color:rgba(0,0,0,0.38); margin-top: 10px;") Start Date
+                md-datepicker(ng-model="typeStartDate" md-placeholder="Start date")
+                label(style="color:rgba(0,0,0,0.38); margin-top: 10px; margin-left: 30px") End Date
+                md-datepicker(ng-model="typeEndDate" md-placeholder="Enter date")
+                md-button.md-icon-button(aria-label="Next Week" ng-click="nextWeek('type')")
+                    md-tooltip(md-direction="bottom" md-autohide="true") Next Week
+                    md-icon(md-svg-icon="assets/images/ic_navigate_next_black_24px.svg")
+                md-button.md-primary.md-raised.md-mini(aria-label="Run" ng-click="runReport('type')") Go
+            div(layout="row" layout-align="center")
+                md-button.md-raised.md-mini(aria-label="Last Month" ng-click="lastMonth('type')") Last Month
+                md-button.md-raised.md-mini(aria-label="This Month" ng-click="thisMonth('type')") This Month
+                md-button.md-raised.md-mini(aria-label="This Year" ng-click="thisYear('type')") This Year
+        md-divider
+        md-progress-linear(md-mode="indeterminate" ng-if="isTypeLoading")
+        .md-padding
+            div(id="typeChart" style="width: 100%; height: 300px;")

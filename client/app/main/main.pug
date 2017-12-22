@@ -1,0 +1,429 @@
+md-toolbar(layout="row")
+    .md-toolbar-tools
+        a(href="https://access.redhat.com/" target="_blank" style="margin-right:20px;")
+            img(ng-src="assets/images/l_redhat-lg.png")
+        span.flex
+        h1.md-title Red Hat Insights Utilities
+        span.flex
+        md-button.md-fab.md-warn.md-raised.md-mini(ng-click="showUserSidenav()" ng-if="isLoggedIn()")
+            md-tooltip(md-direction="left" md-autohide="true") User Profile
+            md-icon(md-svg-src="assets/images/ic_account_circle_white_24px.svg")
+        small(ng-if="isLoggedIn()") {{currentUser.rhn}}
+        md-button.md-raised.md-warn(href="" target='_self' ng-if="!isLoggedIn()") Sign in via Customer Portal
+div(flex layout="row")
+    md-fab-speed-dial.menu.md-padding.md-filing(md-open="isOpen" md-direction="down")
+        md-fab-trigger
+            md-button.md-fab.md-warn(aria-label="Menu")
+                md-tooltip(md-direction="right" md-autohide="true") Menu
+                md-icon(md-svg-src="assets/images/ic_menu_white_24px.svg")
+        md-fab-actions(ng-if="isOpen")
+            md-button.md-fab.md-raised.md-mini(aria-label="Modified KCS Solution Review" ui-sref=".kcsreview")
+                md-tooltip(md-direction="right" md-autohide="true") Modified KCS Solution Review
+                md-icon(md-svg-src="assets/images/ic_list_black_24px.svg")
+        md-fab-actions(ng-if="isOpen")
+            md-button.md-fab.md-raised.md-mini(aria-label="Top Linked KCS Solutions Review" ui-sref=".linkedkcs")
+                md-tooltip(md-direction="right" md-autohide="true") Top Linked KCS Solutions Review
+                md-icon(md-svg-src="assets/images/ic_link_black_24px.svg")
+        md-fab-actions(ng-if="isOpen")
+            md-button.md-fab.md-raised.md-mini(aria-label="Rule Nomination Review" ui-sref=".proactiveissuereview")
+                md-tooltip(md-direction="right" md-autohide="true") Rule Nomination Review
+                md-icon(md-svg-src="assets/images/ic_notifications_black_24px.svg")
+        md-fab-actions(ng-if="isOpen")
+            md-button.md-fab.md-raised.md-mini(aria-label="Statistics" ui-sref=".statistics")
+                md-tooltip(md-direction="right" md-autohide="true") Statistics
+                md-icon(md-svg-src="assets/images/ic_insert_chart_black_24px.svg")
+        md-fab-actions(ng-if="isOpen")
+            md-button.md-fab.md-raised.md-mini(aria-label="KCS Solution Search" ui-sref=".certainSearch")
+                md-tooltip(md-direction="right" md-autohide="true") KCS Solution Search
+                md-icon(md-svg-src="assets/images/ic_search_black_24px.svg")
+    md-content.md-padding(flex)
+        div(ui-view="")
+
+//Search Sidenav for KCS Review
+div(ng-controller="kcsSearchSidenavCtrl")
+    md-sidenav.md-sidenav-right.md-whiteframe-4dp(md-component-id="kcsSearch")
+        md-toolbar(layout="row")
+            .md-toolbar-tools
+                md-icon(md-svg-icon="assets/images/ic_search_white_24px.svg")
+                |&#160;
+                h2 Search Criteria
+                span(flex)
+                md-button.md-icon-button(aria-label="cancel" ng-click="cancelSidenav()")
+                    md-icon(md-svg-icon="assets/images/ic_close_white_24px.svg")
+        md-content(layout="column")
+            .md-padding
+                md-input-container.md-block
+                    label Keyword
+                    input(ng-model="query.keyword")
+                md-content
+                    .md-block
+                        label(style="color:rgba(0,0,0,0.38);") KCS State
+                    .md-block
+                        md-checkbox(ng-model="kcsStateOptions.isVerified") Verified
+                    .md-block
+                        md-checkbox(ng-model="kcsStateOptions.isUnverified") Unverified
+                    .md-block
+                        md-checkbox(ng-model="kcsStateOptions.isInProgress") In Progress
+                md-divider(style="margin-bottom: 40px;")
+                md-input-container.md-block
+                    label SBR(s)
+                    md-chips(ng-model="query.filter.SBR" md-autocomplete-snap md-require-match="true")
+                        md-autocomplete(flex
+                            md-no-cache="false"
+                            md-selected-item="sbr"
+                            md-search-text="sbrSearchText"
+                            md-search-text-change=""
+                            md-items="sbrOption in selectSearch(sbrSearchText, sbrOptions)"
+                            md-item-text="sbrOption"
+                            md-min-length="0"
+                            placeholder="Select a SBR ...")
+                            md-item-template
+                                span(md-highlight-text="sbrSearchText" md-highlight-flags="^i") {{sbrOption}}
+                            md-not-found
+                                span No SBR matching "{{sbrSearchText}}".
+                        md-chip-template
+                            span
+                                strong {{$chip}}
+                .md-block
+                    md-autocomplete(flex
+                        md-no-cache="false"
+                        md-selected-item="query.filter.product"
+                        md-search-text="productSearchText"
+                        md-items="productOption in selectSearch(productSearchText, productOptions)"
+                        md-item-text="productOption"
+                        md-min-length="0"
+                        md-floating-label="Product")
+                        md-item-template
+                            span(md-highlight-text="productSearchText" md-highlight-flags="^i") {{productOption}}
+                        md-not-found
+                            span No Product matching "{{productSearchText}}".
+                md-content
+                    label(style="color:rgba(0,0,0,0.38);") Last Modified Date
+                    md-datepicker(ng-model="query.filter.startDate" md-placeholder="Start date")
+                    md-datepicker(ng-model="query.filter.endDate" md-placeholder="Enter date")
+                    div(layout="row")
+                        md-button.md-icon-button(aria-label="Last Week" ng-click="lastWeek()")
+                            md-tooltip(md-direction="bottom" md-autohide="true") Last Week
+                            md-icon(md-svg-icon="assets/images/ic_navigate_before_black_24px.svg")
+                        md-button.md-icon-button(aria-label="Next Week" ng-click="nextWeek()")
+                            md-tooltip(md-direction="bottom" md-autohide="true") Next Week
+                            md-icon(md-svg-icon="assets/images/ic_navigate_next_black_24px.svg")
+                md-divider(style="margin-bottom: 20px;")
+                md-content
+                    md-checkbox(ng-model="query.isShowInProgress") Include "In Progress" KCS Solutions?
+        .md-padding(layout="row" layout-align="end")
+            md-button.md-raised.md-mini(ng-click="cancelSidenav()") Cancel
+            md-button.md-raised.md-warn.md-mini(ng-click="hideSidenav()") Search
+
+//Search Sidenav for Linked KCS Review
+div(ng-controller="linkedKCSSearchSidenavCtrl")
+    md-sidenav.md-sidenav-right.md-whiteframe-4dp(md-component-id="linkedKCSSearch")
+        md-toolbar(layout="row")
+            .md-toolbar-tools
+                md-icon(md-svg-icon="assets/images/ic_search_white_24px.svg")
+                |&#160;
+                h2 Search Criteria
+                span(flex)
+                md-button.md-icon-button(aria-label="cancel" ng-click="cancelSidenav()")
+                    md-icon(md-svg-icon="assets/images/ic_close_white_24px.svg")
+        md-content(layout="column")
+            .md-padding
+                md-input-container.md-block
+                    label SBR(s)
+                    md-chips(ng-model="linkedKCSSBR" md-autocomplete-snap md-require-match="true")
+                        md-autocomplete(flex
+                            md-no-cache="false"
+                            md-selected-item="sbr"
+                            md-search-text="sbrSearchText"
+                            md-search-text-change=""
+                            md-items="sbrOption in selectSearch(sbrSearchText, sbrOptions)"
+                            md-item-text="sbrOption"
+                            md-min-length="0"
+                            placeholder="Select a SBR ...")
+                            md-item-template
+                                span(md-highlight-text="sbrSearchText" md-highlight-flags="^i") {{sbrOption}}
+                            md-not-found
+                                span No SBR matching "{{sbrSearchText}}".
+                        md-chip-template
+                            span
+                                strong {{$chip}}
+                md-content
+                    label(style="color:rgba(0,0,0,0.38);") Last Modified Date
+                    md-datepicker(ng-model="startDate" md-placeholder="Start date" required)
+                    md-datepicker(ng-model="endDate" md-placeholder="Enter date" required)
+                    div(layout="row")
+                        md-button.md-icon-button(aria-label="Last Week" ng-click="lastWeek()")
+                            md-tooltip(md-direction="bottom" md-autohide="true") Last Week
+                            md-icon(md-svg-icon="assets/images/ic_navigate_before_black_24px.svg")
+                        md-button.md-icon-button(aria-label="Next Week" ng-click="nextWeek()")
+                            md-tooltip(md-direction="bottom" md-autohide="true") Next Week
+                            md-icon(md-svg-icon="assets/images/ic_navigate_next_black_24px.svg")
+                md-input-container.md-block
+                    label Limitation
+                    md-select(ng-model="limitation" required)
+                        md-option(value="30") 30
+                        md-option(value="50") 50
+                        md-option(value="100") 100
+                        md-option(value="200") 200
+        .md-padding(layout="row" layout-align="end")
+            md-button.md-raised.md-mini(ng-click="cancelSidenav()") Cancel
+            md-button.md-raised.md-warn.md-mini(ng-click="hideSidenav()") Search
+
+//Search Sidenav for Reviewed KCS
+div(ng-controller="reviewedKCSSearchSidenavCtrl")
+    md-sidenav.md-sidenav-right.md-whiteframe-4dp(md-component-id="reviewedKCSSearch")
+        md-toolbar(layout="row")
+            .md-toolbar-tools
+                md-icon(md-svg-icon="assets/images/ic_search_white_24px.svg")
+                |&#160;
+                h2 Search Criteria
+                span(flex)
+                md-button.md-icon-button(aria-label="cancel" ng-click="cancelSidenav()")
+                    md-icon(md-svg-icon="assets/images/ic_close_white_24px.svg")
+        md-content(layout="column")
+            .md-padding
+                md-autocomplete(flex
+                    md-no-cache="false"
+                    md-selected-item="lastReviewedBy"
+                    md-search-text="userSearchText"
+                    md-search-text-change=""
+                    md-items="userOption in selectSearch(userSearchText, users)"
+                    md-item-text="userOption"
+                    md-min-length="0"
+                    placeholder="Select a User.."
+                    md-floating-label="Last Reviewed by")
+                    md-item-template
+                        span(md-highlight-text="userSearchText" md-highlight-flags="^i") {{userOption}}
+                    md-not-found
+                        span No User matching "{{userSearchText}}".
+                md-input-container
+                    label SBR(s)
+                    md-chips(ng-model="reviewedKCSSBR" md-autocomplete-snap md-require-match="true")
+                        md-autocomplete(flex
+                            md-no-cache="false"
+                            md-selected-item="reviewedSBR"
+                            md-search-text="sbrSearchText"
+                            md-search-text-change=""
+                            md-items="sbrOption in selectSearch(sbrSearchText, sbrOptions)"
+                            md-item-text="sbrOption"
+                            md-min-length="0"
+                            placeholder="Select a SBR..")
+                            md-item-template
+                                span(md-highlight-text="sbrSearchText" md-highlight-flags="^i") {{sbrOption}}
+                            md-not-found
+                                span No SBR matching "{{sbrSearchText}}".
+                        md-chip-template
+                            span
+                                strong {{$chip}}
+                md-autocomplete(flex
+                    md-no-cache="false"
+                    md-selected-item="reviewedKCSProduct"
+                    md-search-text="productSearchText"
+                    md-items="productOption in selectSearch(productSearchText, productOptions)"
+                    md-item-text="productOption"
+                    md-min-length="0"
+                    placeholder="Select a product.."
+                    md-floating-label="Product")
+                    md-item-template
+                        span(md-highlight-text="productSearchText" md-highlight-flags="^i") {{productOption}}
+                    md-not-found
+                        span No Product matching "{{productSearchText}}".
+                label(style="color:rgba(0,0,0,0.38);") Last Reviewed Date
+                md-datepicker(ng-model="startDate" md-placeholder="Start date")
+                md-datepicker(ng-model="endDate" md-placeholder="Enter date")
+                div(layout="row")
+                    md-button.md-icon-button(aria-label="Last Week" ng-click="lastWeek()")
+                        md-tooltip(md-direction="bottom" md-autohide="true") Last Week
+                        md-icon(md-svg-icon="assets/images/ic_navigate_before_black_24px.svg")
+                    md-button.md-icon-button(aria-label="Next Week" ng-click="nextWeek()")
+                        md-tooltip(md-direction="bottom" md-autohide="true") Next Week
+                        md-icon(md-svg-icon="assets/images/ic_navigate_next_black_24px.svg")
+        .md-padding(layout="row" layout-align="end")
+            md-button.md-raised.md-mini(ng-click="cancelSidenav()") Cancel
+            md-button.md-raised.md-warn.md-mini(ng-click="hideSidenav()") Search
+
+//Sidenav for User Profile
+div(ng-controller="userSidenavCtrl")
+    md-sidenav.md-sidenav-right.md-whiteframe-4dp(md-component-id="userProfile")
+        md-toolbar(layout="row")
+            .md-toolbar-tools
+                md-icon(md-svg-icon="assets/images/ic_account_circle_white_24px.svg")
+                |&#160;
+                h2 User Profile
+                span(flex)
+                md-button.md-icon-button(aria-label="cancel" ng-click="cancelSidenav()")
+                    md-icon(md-svg-icon="assets/images/ic_close_white_24px.svg")
+        md-content(layout="column")
+            .md-padding
+                md-input-container
+                    label Username
+                    input(ng-model="user.rhn" ng-disabled="true")
+                md-input-container
+                    label Default SBR(s)
+                    md-chips(ng-model="user.sbrs" md-autocomplete-snap md-require-match="true")
+                        md-autocomplete(
+                            md-selected-item="userDefaultSBR"
+                            md-search-text="sbrSearchText"
+                            md-items="sbrOption in selectSearch(sbrSearchText, sbrOptions)"
+                            md-item-text="sbrOption"
+                            md-min-length="0"
+                            placeholder="Select a SBR..")
+                            md-item-template
+                                span(md-highlight-text="sbrSearchText" md-highlight-flags="^i") {{sbrOption}}
+                            md-not-found
+                                span No SBR matching "{{sbrSearchText}}".
+                        md-chip-template
+                            span
+                                strong {{$chip}}
+        .md-padding(layout="row" layout-align="end")
+            md-button.md-raised.md-mini(ng-click="cancelSidenav()") Cancel
+            md-button.md-raised.md-warn.md-mini(ng-click="hideSidenav()") Save
+
+//Search Sidenav for Rule Nomination Review
+div(ng-controller="proactiveIssueSearchSidenavCtrl")
+    md-sidenav.md-sidenav-right.md-whiteframe-4dp(md-component-id="proactiveIssueSearch")
+        md-toolbar(layout="row")
+            .md-toolbar-tools
+                md-icon(md-svg-icon="assets/images/ic_search_white_24px.svg")
+                |&#160;
+                h2 Search Criteria
+                span(flex)
+                md-button.md-icon-button(aria-label="cancel" ng-click="cancelSidenav()")
+                    md-icon(md-svg-icon="assets/images/ic_close_white_24px.svg")
+        md-content(layout="column")
+            .md-padding
+                md-input-container.md-block
+                    label Keyword
+                    input(ng-model="keyword")
+                md-content
+                    .md-block
+                        label(style="color:rgba(0,0,0,0.38);") Rule Candidate Source
+                    .md-block
+                        md-checkbox(ng-model="issueTypeOptions.isCase") Case
+                    .md-block
+                        md-checkbox(ng-model="issueTypeOptions.isKCS") KCS Solution
+                    .md-block
+                        md-checkbox(ng-model="issueTypeOptions.isBug") Bugzilla Bug
+                md-divider(style="margin-bottom: 40px;")
+                md-input-container.md-block
+                    label SBR(s)
+                    md-chips(ng-model="proactiveIssueSBR" md-autocomplete-snap md-require-match="true")
+                        md-autocomplete(flex
+                            md-no-cache="false"
+                            md-selected-item="sbr"
+                            md-search-text="sbrSearchText"
+                            md-search-text-change=""
+                            md-items="sbrOption in selectSearch(sbrSearchText, sbrOptions)"
+                            md-item-text="sbrOption"
+                            md-min-length="0"
+                            placeholder="Select a SBR ...")
+                            md-item-template
+                                span(md-highlight-text="sbrSearchText" md-highlight-flags="^i") {{sbrOption}}
+                            md-not-found
+                                span No SBR matching "{{sbrSearchText}}".
+                        md-chip-template
+                            span
+                                strong {{$chip}}
+                .md-block
+                    md-autocomplete(flex
+                        md-no-cache="false"
+                        md-selected-item="proactiveIssueProduct"
+                        md-search-text="productSearchText"
+                        md-items="productOption in selectSearch(productSearchText, productOptions)"
+                        md-item-text="productOption"
+                        md-min-length="0"
+                        md-floating-label="Product")
+                        md-item-template
+                            span(md-highlight-text="productSearchText" md-highlight-flags="^i") {{productOption}}
+                        md-not-found
+                            span No Product matching "{{productSearchText}}".
+                md-content
+                    label(style="color:rgba(0,0,0,0.38);") Last Report Date
+                    md-datepicker(ng-model="startDate" md-placeholder="Start date")
+                    md-datepicker(ng-model="endDate" md-placeholder="Enter date")
+                    div(layout="row")
+                        md-button.md-icon-button(aria-label="Last Week" ng-click="lastWeek()")
+                            md-tooltip(md-direction="bottom" md-autohide="true") Last Week
+                            md-icon(md-svg-icon="assets/images/ic_navigate_before_black_24px.svg")
+                        md-button.md-icon-button(aria-label="Next Week" ng-click="nextWeek()")
+                            md-tooltip(md-direction="bottom" md-autohide="true") Next Week
+                            md-icon(md-svg-icon="assets/images/ic_navigate_next_black_24px.svg")
+        .md-padding(layout="row" layout-align="end")
+            md-button.md-raised.md-mini(ng-click="cancelSidenav()") Cancel
+            md-button.md-raised.md-warn.md-mini(ng-click="hideSidenav()") Search
+
+//Search Sidenav for Reviewed Rule Nomination
+div(ng-controller="reviewedProactiveIssueSearchSidenavCtrl")
+    md-sidenav.md-sidenav-right.md-whiteframe-4dp(md-component-id="reviewedProactiveIssueSearch")
+        md-toolbar(layout="row")
+            .md-toolbar-tools
+                md-icon(md-svg-icon="assets/images/ic_search_white_24px.svg")
+                |&#160;
+                h2 Search Criteria
+                span(flex)
+                md-button.md-icon-button(aria-label="cancel" ng-click="cancelSidenav()")
+                    md-icon(md-svg-icon="assets/images/ic_close_white_24px.svg")
+        md-content(layout="column")
+            .md-padding
+                md-input-container.md-block
+                    label Keyword
+                    input(ng-model="keyword")
+                md-autocomplete(flex
+                    md-no-cache="false"
+                    md-selected-item="lastReviewedBy"
+                    md-search-text="userSearchText"
+                    md-search-text-change=""
+                    md-items="userOption in selectSearch(userSearchText, users)"
+                    md-item-text="userOption"
+                    md-min-length="0"
+                    placeholder="Select a User.."
+                    md-floating-label="Last Reviewed by")
+                    md-item-template
+                        span(md-highlight-text="userSearchText" md-highlight-flags="^i") {{userOption}}
+                    md-not-found
+                        span No User matching "{{userSearchText}}".
+                md-input-container
+                    label SBR(s)
+                    md-chips(ng-model="reviewedProactiveIssueSBR" md-autocomplete-snap md-require-match="true")
+                        md-autocomplete(flex
+                            md-no-cache="false"
+                            md-selected-item="reviewedSBR"
+                            md-search-text="sbrSearchText"
+                            md-search-text-change=""
+                            md-items="sbrOption in selectSearch(sbrSearchText, sbrOptions)"
+                            md-item-text="sbrOption"
+                            md-min-length="0"
+                            placeholder="Select a SBR..")
+                            md-item-template
+                                span(md-highlight-text="sbrSearchText" md-highlight-flags="^i") {{sbrOption}}
+                            md-not-found
+                                span No SBR matching "{{sbrSearchText}}".
+                        md-chip-template
+                            span
+                                strong {{$chip}}
+                md-autocomplete(flex
+                    md-no-cache="false"
+                    md-selected-item="reviewedProactiveIssueProduct"
+                    md-search-text="productSearchText"
+                    md-items="productOption in selectSearch(productSearchText, productOptions)"
+                    md-item-text="productOption"
+                    md-min-length="0"
+                    placeholder="Select a product.."
+                    md-floating-label="Product")
+                    md-item-template
+                        span(md-highlight-text="productSearchText" md-highlight-flags="^i") {{productOption}}
+                    md-not-found
+                        span No Product matching "{{productSearchText}}".
+                label(style="color:rgba(0,0,0,0.38);") Last Reviewed Date
+                md-datepicker(ng-model="startDate" md-placeholder="Start date")
+                md-datepicker(ng-model="endDate" md-placeholder="Enter date")
+                div(layout="row")
+                    md-button.md-icon-button(aria-label="Last Week" ng-click="lastWeek()")
+                        md-tooltip(md-direction="bottom" md-autohide="true") Last Week
+                        md-icon(md-svg-icon="assets/images/ic_navigate_before_black_24px.svg")
+                    md-button.md-icon-button(aria-label="Next Week" ng-click="nextWeek()")
+                        md-tooltip(md-direction="bottom" md-autohide="true") Next Week
+                        md-icon(md-svg-icon="assets/images/ic_navigate_next_black_24px.svg")
+        .md-padding(layout="row" layout-align="end")
+            md-button.md-raised.md-mini(ng-click="cancelSidenav()") Cancel
+            md-button.md-raised.md-warn.md-mini(ng-click="hideSidenav()") Search

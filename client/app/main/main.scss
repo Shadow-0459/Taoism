@@ -1,0 +1,48 @@
+.nowrap {
+    white-space: nowrap;
+}
+
+.watermark {
+    color: #ff5722;
+    //font-size: 20px;
+    //min-width: 88px;
+    position: absolute;
+    opacity: 0.50;
+    //font-size: 3em;
+    //margin-left: 10%;
+    //margin-top: 10px;
+    //width: 100%;
+    //text-align: center;
+    z-index: 0;
+    transform: rotate(340deg);
+    -webkit-transform: rotate(340deg);
+}
+
+.candidate {
+    color: #259b24;
+    font-weight: bold;
+}
+
+.ruled {
+    color: #FF6F00;
+    font-weight: bold;
+}
+
+.not-sure {
+    color: #0091ea;
+    font-weight: bold;
+}
+
+md-input-container .hint {
+    /* Position the hint */
+    //position: absolute;
+    left: 2px;
+    right: auto;
+    bottom: 7px;
+    /* Copy styles from ng-messages */
+    font-size: 12px;
+    line-height: 14px;
+    transition: all 0.3s cubic-bezier(0.55, 0, 0.55, 0.2);
+    /* Set our own color */
+    color: grey;
+}

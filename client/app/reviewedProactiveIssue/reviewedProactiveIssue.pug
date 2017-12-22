@@ -1,0 +1,53 @@
+div(layout="column" layout-align="center")
+    md-content
+        div(layout="row")
+            h2 Reviewed Rule Nominations
+            span(flex)
+            md-button.md-fab.md-raised.md-mini(aria-label="Rule Nomination Review" ui-sref="main.proactiveissuereview")
+                md-tooltip(md-direction="bottom" md-autohide="true") Rule Nomination Review
+                md-icon(md-svg-src="assets/images/ic_notifications_black_24px.svg")
+            md-button.md-fab.md-raised.md-mini(aria-label="Search Reviewed KCS Solutions" ng-click="showSearchSidenav()")
+                md-tooltip(md-direction="bottom" md-autohide="true") Search Reviewed Rule Nominations
+                md-icon(md-svg-icon="assets/images/ic_search_black_24px.svg")
+        md-table-container(flex)
+            span.md-subhead(style="color:rgba(0,0,0,0.54);") {{subtitle}}
+            table(md-table md-progress="promise")
+                thead(md-head md-order="myOrder")
+                    tr(md-row)
+                        th(md-column md-order-by="issueType") Type
+                        th(md-column) ID
+                        <!-- when the user clicks this cell, the myOrder variable will get the value 'nameToLower' -->
+                        th(md-column) Title
+                        <!-- the variable myOrder will not be changed when this cell is clicked -->
+                        th(md-column md-order-by="sbr")
+                            span SBR
+                        th(md-column md-order-by="product")
+                            span Product
+                        th(md-column md-order-by="lastReportDate")
+                            span Last Reviewed By
+                        th(md-column md-order-by="lastReportDate")
+                            span Last Reviewed Date
+                        th(md-column md-order-by="reviewState") State
+                        th(md-column)
+                            span Action
+                tbody(md-body)
+                    <!-- we can let ng-repeat sort the columns for us -->
+                    tr(md-row ng-repeat="issue in issueList | orderBy: myOrder | limitTo: resultsOptions.limit : (resultsOptions.page -1) * resultsOptions.limit")
+                        td(md-cell) {{issue.issueType}}
+                        td(md-cell)
+                            a(href="{{issue.view_uri}}" target="_blank") {{issue.id}}
+                        td(md-cell)
+                            p {{issue.title}}
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p.nowrap(ng-repeat="sbr in issue.sbr track by $index" ng-bind-html="sbr")
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p(ng-repeat="product in issue.product track by $index" ng-bind-html="product")
+                        td(md-cell style="padding: 0 0 0 0;") {{issue.lastReviewedBy}}
+                        td(md-cell style="padding: 0 0 0 0;") {{formatDate(issue.lastReviewedDate)}}
+                        td(md-cell style="padding: 0 20px 0 0;")
+                            p(ng-class="{'candidate': issue.reviewState === 'Candidate', 'ruled': issue.reviewState === 'Ruled', 'not-sure': issue.reviewState === 'In Progress'}") {{issue.reviewState}}
+                        td(md-cell)
+                            md-button.md-fab.md-raised.md-mini(aria-label="Review" ng-click="showDetailDialog($event, issue)")
+                                md-tooltip(md-direction="left" md-autohide="true") Detail
+                                md-icon(md-svg-icon="assets/images/ic_description_black_24px.svg")
+        md-table-pagination(md-limit="resultsOptions.limit" md-limit-options="resultsOptions.limitOptions" md-page="resultsOptions.page" md-total="{{issueList.length}}" md-page-select="true" md-boundary-links="true" md-on-paginate="")
